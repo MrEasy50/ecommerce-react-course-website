@@ -1,6 +1,6 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Auth() {
@@ -9,7 +9,7 @@ export default function Auth() {
 
 	const navigate = useNavigate();
 
-	const { signUp, user, logout, login } = useContext(AuthContext);
+	const { signUp, login } = useAuth();
 
 	const {
 		register,
@@ -25,21 +25,18 @@ export default function Auth() {
 		} else {
 			result = login(data.email, data.password);
 		}
+
 		if (result.success) {
 			navigate('/');
 		} else {
 			setError(result.error);
 		}
-
-		console.log(result);
 	}
 
 	return (
 		<div className='page'>
 			<div className='container'>
 				<div className='auth-container'>
-					{user && <p>User logged in: {user.email}</p>}
-					<button onClick={() => logout()}>Logout</button>
 					<h1 className='page-title'>
 						{mode === 'signup' ? 'Sign Up' : 'Login'}
 					</h1>
@@ -64,9 +61,6 @@ export default function Auth() {
 								Password
 							</label>
 							<input
-								className='form-input'
-								type='password'
-								id='password'
 								{...register('password', {
 									required: 'Password is required',
 									minLength: {
@@ -78,6 +72,9 @@ export default function Auth() {
 										message: 'Password must be less than 12 characters',
 									},
 								})}
+								className='form-input'
+								type='password'
+								id='password'
 							/>
 							{errors.password && (
 								<span className='form-error'>{errors.password.message}</span>
@@ -99,7 +96,8 @@ export default function Auth() {
 							</p>
 						) : (
 							<p>
-								Don&apos;t have an account?{' '}
+								{' '}
+								Don't have an account?{' '}
 								<span className='auth-link' onClick={() => setMode('signup')}>
 									Sign Up
 								</span>

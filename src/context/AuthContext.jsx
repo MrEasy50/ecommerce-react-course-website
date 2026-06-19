@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { createContext } from 'react';
+import { createContext, useState, useContext } from 'react';
 
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 export default function AuthProvider({ children }) {
 	const [user, setUser] = useState(
@@ -16,7 +15,6 @@ export default function AuthProvider({ children }) {
 		if (users.find((u) => u.email === email)) {
 			return { success: false, error: 'Email already exists' };
 		}
-
 		const newUser = { email, password };
 		users.push(newUser);
 		localStorage.setItem('users', JSON.stringify(users));
@@ -24,7 +22,7 @@ export default function AuthProvider({ children }) {
 
 		setUser({ email });
 
-		return { sucess: true };
+		return { success: true };
 	}
 
 	function login(email, password) {
@@ -53,4 +51,10 @@ export default function AuthProvider({ children }) {
 			{children}
 		</AuthContext.Provider>
 	);
+}
+
+export function useAuth() {
+	const context = useContext(AuthContext);
+
+	return context;
 }
